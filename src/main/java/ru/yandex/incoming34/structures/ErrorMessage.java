@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ErrorMessage {
-	SUCCESS("SUCCESS");
+	SUCCESS("SUCCESS"), ILLEGAL_ARGUMENT("Invalid input data");
 
 	private final String message;
 }
