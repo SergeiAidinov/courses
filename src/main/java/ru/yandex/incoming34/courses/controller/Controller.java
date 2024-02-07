@@ -27,7 +27,8 @@ public class Controller {
 	@PostMapping("/regCourse")
 	@Operation(description = "Получив эти данные, приложение course фиксирует время регистрации нового курса и сохраняет данные в коллекцию значений в памяти.")
 	public CoursesResponce regCourse(
-			@Schema(example = "{\"currencyId\": \"USD\", \"currencyVal\": \"92.8722\"}") @RequestBody NewExchangeRate newExchangeRate) {
+			@Schema(example = "{\"currencyId\": \"USD\", \"currencyVal\": 92.8722}") @RequestBody NewExchangeRate newExchangeRate) {
+		System.out.println(newExchangeRate);
 		if (validationService.validate(newExchangeRate))
 			return new CoursesResponce(ErrorCode.ZERO, ErrorMessage.SUCCESS);
 		return new CoursesResponce(ErrorCode.ONE, ErrorMessage.ILLEGAL_ARGUMENT);

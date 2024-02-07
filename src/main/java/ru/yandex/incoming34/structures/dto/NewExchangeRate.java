@@ -1,16 +1,21 @@
 package ru.yandex.incoming34.structures.dto;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
 public class NewExchangeRate {
 
 	@Pattern(regexp = "USD|EUR{3}")
-	private String currencyId;
-	@Pattern(regexp = "[0-9]{1,}[.][0-9]{4}")
-	private String currencyVal;
+	private final String currencyId;
+	private final BigDecimal currencyVal;
+
+	public NewExchangeRate(@Pattern(regexp = "USD|EUR{3}") String currencyId, BigDecimal currencyVal) {
+		this.currencyId = currencyId;
+		this.currencyVal = currencyVal.setScale(4, RoundingMode.DOWN);
+	}
 
 }
