@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import lombok.Getter;
 import ru.yandex.incoming34.structures.Currencies;
 
+@Getter
 public class RegisterCourseCommand extends Command {
 
 	private final Currencies currency;

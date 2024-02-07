@@ -3,10 +3,6 @@ package ru.yandex.incoming34.structures.command;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import lombok.Getter;
-
-//@AllArgsConstructor
-@Getter
 public abstract class Command {
 
 	private final LocalDateTime commandDateTime;
@@ -15,6 +11,14 @@ public abstract class Command {
 	public Command(LocalDateTime commandDateTime, UUID commandUuid) {
 		this.commandDateTime = commandDateTime;
 		this.commandUuid = commandUuid;
+	}
+
+	public LocalDateTime getCommandDateTime() {
+		return commandDateTime;
+	}
+
+	public UUID getCommandUuid() {
+		return commandUuid;
 	}
 
 }
