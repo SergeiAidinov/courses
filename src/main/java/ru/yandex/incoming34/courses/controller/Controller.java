@@ -6,15 +6,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import ru.yandex.incoming34.courses.service.DataService;
+import ru.yandex.incoming34.structures.ErrorCode;
+import ru.yandex.incoming34.structures.ErrorMessage;
+import ru.yandex.incoming34.structures.dto.CoursesResponce;
+import ru.yandex.incoming34.structures.dto.NewExchangeRate;
 
 @RestController
 @RequestMapping(value = "/api/courses")
+@AllArgsConstructor
 public class Controller {
+
+	private final DataService dataService;
 
 	@PostMapping("/regCourse")
 	@Operation(description = "Получив эти данные, приложение course фиксирует время регистрации нового курса и сохраняет данные в коллекцию значений в памяти.")
-	public void regCourse(String userId) {
-
+	public CoursesResponce regCourse(
+			@Schema(example = "{“currencyId”: “USD”, “currencyVal”: 92.8722}") NewExchangeRate newExchangeRate) {
+		return new CoursesResponce(ErrorCode.ZERO, ErrorMessage.SUCCESS);
 	}
 
 	@PostMapping("/loadData")
