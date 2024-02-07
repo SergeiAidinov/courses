@@ -1,5 +1,8 @@
 package ru.yandex.incoming34.courses.controller;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,8 +14,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import ru.yandex.incoming34.courses.service.DataService;
 import ru.yandex.incoming34.courses.service.ValidationService;
+import ru.yandex.incoming34.structures.Currencies;
 import ru.yandex.incoming34.structures.ErrorCode;
 import ru.yandex.incoming34.structures.ErrorMessage;
+import ru.yandex.incoming34.structures.command.RegisterCourseCommand;
 import ru.yandex.incoming34.structures.dto.CoursesResponce;
 import ru.yandex.incoming34.structures.dto.NewExchangeRate;
 
@@ -28,9 +33,12 @@ public class Controller {
 	@Operation(description = "Получив эти данные, приложение course фиксирует время регистрации нового курса и сохраняет данные в коллекцию значений в памяти.")
 	public CoursesResponce regCourse(
 			@Schema(example = "{\"currencyId\": \"USD\", \"currencyVal\": 92.8722}") @RequestBody NewExchangeRate newExchangeRate) {
-		System.out.println(newExchangeRate);
-		if (validationService.validate(newExchangeRate))
+		if (validationService.validate(newExchangeRate)) {
+			dataService.getCommands().add(new RegisterCourseCommand(LocalDateTime.now(), UUID.randomUUID(),
+					Currencies.valueOf(newExchangeRate.getCurrencyId()), newExchangeRate.getCurrencyVal()));
 			return new CoursesResponce(ErrorCode.ZERO, ErrorMessage.SUCCESS);
+		}
+
 		return new CoursesResponce(ErrorCode.ONE, ErrorMessage.ILLEGAL_ARGUMENT);
 	}
 
