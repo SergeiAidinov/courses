@@ -9,7 +9,7 @@ import ru.yandex.incoming34.structures.RegExpPatterns;
 
 @Getter
 @AllArgsConstructor
-public class NewExchangeRate {
+public class ExchangeRate {
 
 	@Pattern(regexp = RegExpPatterns.AVAILABLE_CURRENCIES)
 	private final String currencyId;

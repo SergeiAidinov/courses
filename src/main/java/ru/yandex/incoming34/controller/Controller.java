@@ -10,8 +10,8 @@ import ru.yandex.incoming34.structures.Currencies;
 import ru.yandex.incoming34.structures.ErrorCode;
 import ru.yandex.incoming34.structures.ErrorMessage;
 import ru.yandex.incoming34.structures.dto.CoursesResponce;
-import ru.yandex.incoming34.structures.dto.NewExchangeRate;
-import ru.yandex.incoming34.structures.dto.NewExchangeRateWithDate;
+import ru.yandex.incoming34.structures.dto.ExchangeRate;
+import ru.yandex.incoming34.structures.dto.ExchangeRateWithDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -30,10 +30,10 @@ public class Controller {
     @PostMapping("/regCourse")
     @Operation(description = "Получив эти данные, приложение course фиксирует время регистрации нового курса и сохраняет данные в коллекцию значений в памяти.")
     public CoursesResponce regCourse(
-            @Schema(example = "{\"currencyId\": \"USD\", \"currencyVal\": 92.8722}") @RequestBody NewExchangeRate newExchangeRate) {
-        if (validationService.validate(newExchangeRate)) {
-            dataService.addNewExchangeRate(new NewExchangeRateWithDate(
-                   newExchangeRate.getCurrencyId(), newExchangeRate.getCurrencyVal(), LocalDateTime.now()));
+            @Schema(example = "{\"currencyId\": \"USD\", \"currencyVal\": 92.8722}") @RequestBody ExchangeRate exchangeRate) {
+        if (validationService.validate(exchangeRate)) {
+            dataService.addNewExchangeRate(new ExchangeRateWithDate(
+                   exchangeRate.getCurrencyId(), exchangeRate.getCurrencyVal(), LocalDateTime.now()));
             return new CoursesResponce(ErrorCode.ZERO, ErrorMessage.SUCCESS);
         }
         return new CoursesResponce(ErrorCode.ONE, ErrorMessage.ILLEGAL_ARGUMENT);
@@ -44,8 +44,8 @@ public class Controller {
     public void loadData(@Schema(example = "[{\"currencyId\": \"USD\", \"currencyVal\": 92.8722, \"regTime\": \"2024-02-07T11:31:42.201\"}, " +
             "{\"currencyId\": \"USD\", \"currencyVal\": 92.8742, \"regTime\": \"2024-02-07T12:31:44.122\"}, " +
             "{\"currencyId\": \"EUR\", \"currencyVal\": 99.9282, \"regTime\": \"2024-02-07T13:02:22.114\"}]")
-                             @RequestBody List<NewExchangeRateWithDate> newExchangeRateWithDateList) {
-        dataService.addNewBulkExchangeRate(newExchangeRateWithDateList);
+                             @RequestBody List<ExchangeRateWithDate> exchangeRateWithDateList) {
+        dataService.addNewBulkExchangeRate(exchangeRateWithDateList);
     }
 
     @GetMapping("/getCourse/{currencyId}")
@@ -56,7 +56,7 @@ public class Controller {
 
     @GetMapping("/getCourseMax5/{currencyId}")
     @Operation(description = "Возвращает массив пяти последних самых высоких курса, которые присутствуют в текущем хранимом массиве записей курсов")
-    public List<NewExchangeRateWithDate> getFiveCourseMax(Currencies currencyId) {
+    public List<ExchangeRateWithDate> getFiveCourseMax(Currencies currencyId) {
         return dataService.getFiveCourseMax(currencyId);
     }
 

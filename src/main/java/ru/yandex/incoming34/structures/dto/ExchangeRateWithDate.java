@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Getter
-public class NewExchangeRateWithDate {
+public class ExchangeRateWithDate {
 
     @Pattern(regexp = RegExpPatterns.AVAILABLE_CURRENCIES)
     private final String currencyId;

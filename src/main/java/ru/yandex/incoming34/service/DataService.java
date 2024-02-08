@@ -2,7 +2,7 @@ package ru.yandex.incoming34.service;
 
 import org.springframework.stereotype.Service;
 import ru.yandex.incoming34.structures.Currencies;
-import ru.yandex.incoming34.structures.dto.NewExchangeRateWithDate;
+import ru.yandex.incoming34.structures.dto.ExchangeRateWithDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,7 +21,7 @@ public class DataService {
 
     private final Map<Currencies, TreeMap<LocalDateTime, BigDecimal>> exchangeRates = new HashMap<Currencies, TreeMap<LocalDateTime, BigDecimal>>();
 
-    public void addNewExchangeRate(NewExchangeRateWithDate registerCourseCommand) {
+    public void addNewExchangeRate(ExchangeRateWithDate registerCourseCommand) {
         if (Objects.isNull(exchangeRates.get(Currencies.valueOf(registerCourseCommand.getCurrencyId())))) {
             exchangeRates.put(Currencies.valueOf(registerCourseCommand.getCurrencyId()), new TreeMap<LocalDateTime, BigDecimal>());
         }
@@ -39,25 +39,27 @@ public class DataService {
                 Objects.nonNull(exchangeRates.get(currency).lastEntry())) ? Optional.of(exchangeRates.get(currency).lastEntry()) : Optional.empty();
     }
 
-    public void addNewBulkExchangeRate(List<NewExchangeRateWithDate> newBulkExchangeRateList) {
-        for (NewExchangeRateWithDate newExchangeRateWithDate : newBulkExchangeRateList) {
-            addNewExchangeRate(newExchangeRateWithDate);
+    public void addNewBulkExchangeRate(List<ExchangeRateWithDate> newBulkExchangeRateList) {
+        for (ExchangeRateWithDate exchangeRateWithDate : newBulkExchangeRateList) {
+            addNewExchangeRate(exchangeRateWithDate);
         }
     }
 
-    public List<NewExchangeRateWithDate> getFiveCourseMax(Currencies currency) {
-        if (Objects.nonNull(exchangeRates.get(currency))) {
-             return exchangeRates.get(currency).entrySet().stream()
-                    .sorted(Map.Entry.comparingByValue())
-                    .collect(Collectors.toList())
-                    .stream()
-                    .limit(5)
-                    .collect(Collectors.toList())
-                    .stream()
-                    .map(localDateTimeBigDecimalEntry -> new NewExchangeRateWithDate(currency.name(), localDateTimeBigDecimalEntry.getValue(), localDateTimeBigDecimalEntry.getKey()))
-                    .collect(Collectors.toList());
-        }
-        return Collections.EMPTY_LIST;
+    public List<ExchangeRateWithDate> getFiveCourseMax(Currencies currency) {
+        return (Objects.nonNull(exchangeRates.get(currency))) ?
+                exchangeRates.get(currency).entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue())
+                        .collect(Collectors.toList())
+                        .stream()
+                        .limit(5)
+                        .collect(Collectors.toList())
+                        .stream()
+                        .map(localDateTimeBigDecimalEntry ->
+                                new ExchangeRateWithDate(
+                                        currency.name(),
+                                        localDateTimeBigDecimalEntry.getValue(),
+                                        localDateTimeBigDecimalEntry.getKey()
+                                )).collect(Collectors.toList()) : Collections.EMPTY_LIST;
     }
 
 }
