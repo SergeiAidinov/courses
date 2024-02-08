@@ -36,8 +36,8 @@ public class Controller {
     public CoursesResponce regCourse(
             @Schema(example = "{\"currencyId\": \"USD\", \"currencyVal\": 92.8722}") @RequestBody NewExchangeRate newExchangeRate) {
         if (validationService.validate(newExchangeRate)) {
-            dataService.addNewExchangeRate(new RegisterCourseCommand(LocalDateTime.now(),
-                    Currencies.valueOf(newExchangeRate.getCurrencyId()), newExchangeRate.getCurrencyVal()));
+            dataService.addNewExchangeRate(new NewExchangeRateWithDate(
+                   newExchangeRate.getCurrencyId(), newExchangeRate.getCurrencyVal(), LocalDateTime.now()));
             return new CoursesResponce(ErrorCode.ZERO, ErrorMessage.SUCCESS);
         }
 
@@ -58,7 +58,7 @@ public class Controller {
     @Operation(description = "Возвращает последний установленный курс")
     public Optional<Entry<LocalDateTime, BigDecimal>> getCourse(Currencies currencyId) {
         System.out.println(currencyId);
-        return dataService.getLastExchangerate(new RequestLastExchangerate(currencyId, UUID.randomUUID()));
+        return dataService.getLastExchangeRate(new RequestLastExchangerate(currencyId, UUID.randomUUID()));
 
     }
 

@@ -12,7 +12,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import ru.yandex.incoming34.structures.Currencies;
 import ru.yandex.incoming34.structures.dto.NewExchangeRateWithDate;
-import ru.yandex.incoming34.structures.dto.RegisterCourseCommand;
 import ru.yandex.incoming34.structures.dto.RequestLastExchangerate;
 
 @Service
@@ -31,19 +30,19 @@ public class DataService {
         new Thread(new CommandProcessor(commands, this)).start();
     }*/
 
-    public void addNewExchangeRate(RegisterCourseCommand registerCourseCommand) {
-        if (Objects.isNull(exchangeRates.get(registerCourseCommand.getCurrency())))
-            exchangeRates.put(registerCourseCommand.getCurrency(), new TreeMap<LocalDateTime, BigDecimal>());
-        exchangeRates.get(registerCourseCommand.getCurrency()).put(registerCourseCommand.getCommandDateTime(),
-                registerCourseCommand.getExchangeRate());
-        if (exchangeRates.get(registerCourseCommand.getCurrency()).size() > MAX_REPO_SIZE) {
-            exchangeRates.get(registerCourseCommand.getCurrency()).pollFirstEntry();
+    public void addNewExchangeRate(NewExchangeRateWithDate registerCourseCommand) {
+        if (Objects.isNull(exchangeRates.get(registerCourseCommand.getCurrencyId())))
+            exchangeRates.put(Currencies.valueOf(registerCourseCommand.getCurrencyId()), new TreeMap<LocalDateTime, BigDecimal>());
+        exchangeRates.get(Currencies.valueOf(registerCourseCommand.getCurrencyId())).put(registerCourseCommand.getRegTime(),
+                registerCourseCommand.getCurrencyVal());
+        if (exchangeRates.get(Currencies.valueOf(registerCourseCommand.getCurrencyId())).size() > MAX_REPO_SIZE) {
+            exchangeRates.get(Currencies.valueOf(registerCourseCommand.getCurrencyId())).pollFirstEntry();
         }
         System.out.println(exchangeRates);
         LOGGER.info(exchangeRates.toString());
     }
 
-    public Optional<Entry<LocalDateTime, BigDecimal>> getLastExchangerate(RequestLastExchangerate requestLastExchangerate) {
+    public Optional<Entry<LocalDateTime, BigDecimal>> getLastExchangeRate(RequestLastExchangerate requestLastExchangerate) {
         if (Objects.nonNull(exchangeRates.get(requestLastExchangerate.getCurrency())) &&
                 Objects.nonNull(exchangeRates.get(requestLastExchangerate.getCurrency()).lastEntry())) {
             return Optional.of(exchangeRates.get(requestLastExchangerate.getCurrency()).lastEntry());
@@ -52,6 +51,9 @@ public class DataService {
         }
     }
 
-    public void addNewBulkExchangeRate(List<NewExchangeRateWithDate> newBulkExchangeRate) {
+    public void addNewBulkExchangeRate(List<NewExchangeRateWithDate> newBulkExchangeRateList) {
+        for (NewExchangeRateWithDate newExchangeRateWithDate : newBulkExchangeRateList) {
+            addNewExchangeRate(newExchangeRateWithDate);
+        }
     }
 }
