@@ -1,27 +1,23 @@
-package ru.yandex.incoming34.courses.controller;
+package ru.yandex.incoming34.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.incoming34.service.DataService;
+import ru.yandex.incoming34.service.ValidationService;
+import ru.yandex.incoming34.structures.Currencies;
+import ru.yandex.incoming34.structures.ErrorCode;
+import ru.yandex.incoming34.structures.ErrorMessage;
+import ru.yandex.incoming34.structures.dto.CoursesResponce;
+import ru.yandex.incoming34.structures.dto.NewExchangeRate;
+import ru.yandex.incoming34.structures.dto.NewExchangeRateWithDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import ru.yandex.incoming34.courses.service.DataService;
-import ru.yandex.incoming34.courses.service.ValidationService;
-import ru.yandex.incoming34.structures.Currencies;
-import ru.yandex.incoming34.structures.ErrorCode;
-import ru.yandex.incoming34.structures.ErrorMessage;
-import ru.yandex.incoming34.structures.dto.*;
 
 @RestController
 @RequestMapping(value = "/api/courses")
@@ -40,7 +36,6 @@ public class Controller {
                    newExchangeRate.getCurrencyId(), newExchangeRate.getCurrencyVal(), LocalDateTime.now()));
             return new CoursesResponce(ErrorCode.ZERO, ErrorMessage.SUCCESS);
         }
-
         return new CoursesResponce(ErrorCode.ONE, ErrorMessage.ILLEGAL_ARGUMENT);
     }
 
@@ -51,21 +46,18 @@ public class Controller {
             "{\"currencyId\": \"EUR\", \"currencyVal\": 99.9282, \"regTime\": \"2024-02-07T13:02:22.114\"}]")
                              @RequestBody List<NewExchangeRateWithDate> newExchangeRateWithDateList) {
         dataService.addNewBulkExchangeRate(newExchangeRateWithDateList);
-
     }
 
     @GetMapping("/getCourse/{currencyId}")
     @Operation(description = "Возвращает последний установленный курс")
     public Optional<Entry<LocalDateTime, BigDecimal>> getCourse(Currencies currencyId) {
-        System.out.println(currencyId);
-        return dataService.getLastExchangeRate(new RequestLastExchangerate(currencyId, UUID.randomUUID()));
-
+        return dataService.getLastExchangeRate(currencyId);
     }
 
-    @GetMapping("/getCourseMax5")
+    @GetMapping("/getCourseMax5/{currencyId}")
     @Operation(description = "Возвращает массив пяти последних самых высоких курса, которые присутствуют в текущем хранимом массиве записей курсов")
-    public void getFiveCourseMax() {
-
+    public List<NewExchangeRateWithDate> getFiveCourseMax(Currencies currencyId) {
+        return dataService.getFiveCourseMax(currencyId);
     }
 
     @GetMapping("/getCourseExtremum3")

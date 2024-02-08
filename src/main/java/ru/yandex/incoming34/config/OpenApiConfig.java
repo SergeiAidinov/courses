@@ -1,4 +1,4 @@
-package ru.yandex.incoming34.courses.config;
+package ru.yandex.incoming34.config;
 
 import java.io.File;
 import java.util.Objects;

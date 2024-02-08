@@ -1,4 +1,4 @@
-package ru.yandex.incoming34.courses.service;
+package ru.yandex.incoming34.service;
 
 /*
 
