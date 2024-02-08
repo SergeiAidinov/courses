@@ -1,10 +1,6 @@
 package ru.yandex.incoming34.courses.service;
 
-import java.util.Queue;
-
-import lombok.AllArgsConstructor;
-import ru.yandex.incoming34.structures.command.Command;
-import ru.yandex.incoming34.structures.command.RegisterCourseCommand;
+/*
 
 @AllArgsConstructor
 public class CommandProcessor implements Runnable {
@@ -23,7 +19,7 @@ public class CommandProcessor implements Runnable {
 			if (!commands.isEmpty()) {
 				Command command = commands.poll();
 				System.out.println(command);
-				if (command.getClass().equals(ru.yandex.incoming34.structures.command.RegisterCourseCommand.class)) {
+				if (command.getClass().equals(ru.yandex.incoming34.structures.dto.CoursesResponce.RegisterCourseCommand.class)) {
 					addNewExchangeRate(command);
 				}
 			}
@@ -36,3 +32,4 @@ public class CommandProcessor implements Runnable {
 	}
 
 }
+*/

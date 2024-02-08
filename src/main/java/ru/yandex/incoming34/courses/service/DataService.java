@@ -8,13 +8,11 @@ import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.Getter;
 import ru.yandex.incoming34.structures.Currencies;
-import ru.yandex.incoming34.structures.command.Command;
-import ru.yandex.incoming34.structures.command.RegisterCourseCommand;
-import ru.yandex.incoming34.structures.command.RequestLastExchangerate;
+import ru.yandex.incoming34.structures.dto.RequestLastExchangerate;
+import ru.yandex.incoming34.structures.dto.CoursesResponce;
 
 @Service
 @Getter
@@ -25,14 +23,14 @@ public class DataService {
 
     @Getter(value = AccessLevel.NONE)
     private final Map<Currencies, TreeMap<LocalDateTime, BigDecimal>> exchangeRates = new HashMap<Currencies, TreeMap<LocalDateTime, BigDecimal>>();
-    private final Queue<Command> commands = new LinkedList<>();
+    //private final Queue<Command> commands = new LinkedList<>();
 
-    @PostConstruct
+    /*@PostConstruct
     private void startCommandProcessing() {
         new Thread(new CommandProcessor(commands, this)).start();
-    }
+    }*/
 
-    public void addNewExchangeRate(RegisterCourseCommand registerCourseCommand) {
+    public void addNewExchangeRate(CoursesResponce.RegisterCourseCommand registerCourseCommand) {
         if (Objects.isNull(exchangeRates.get(registerCourseCommand.getCurrency())))
             exchangeRates.put(registerCourseCommand.getCurrency(), new TreeMap<LocalDateTime, BigDecimal>());
         exchangeRates.get(registerCourseCommand.getCurrency()).put(registerCourseCommand.getCommandDateTime(),

@@ -1,4 +1,4 @@
-package ru.yandex.incoming34.structures.command;
+package ru.yandex.incoming34.structures.dto;
 
 import java.util.UUID;
 
@@ -8,7 +8,7 @@ import ru.yandex.incoming34.structures.Currencies;
 
 @AllArgsConstructor
 @Getter
-public class RequestLastExchangerate extends Command {
+public class RequestLastExchangerate {
 
 	private final Currencies currency;
 	private final UUID commandId;
