@@ -1,6 +1,8 @@
 package ru.yandex.incoming34.courses.controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,7 @@ import ru.yandex.incoming34.structures.Currencies;
 import ru.yandex.incoming34.structures.ErrorCode;
 import ru.yandex.incoming34.structures.ErrorMessage;
 import ru.yandex.incoming34.structures.command.RegisterCourseCommand;
+import ru.yandex.incoming34.structures.command.RequestLastExchangerate;
 import ru.yandex.incoming34.structures.dto.CoursesResponce;
 import ru.yandex.incoming34.structures.dto.NewExchangeRate;
 
@@ -33,8 +36,9 @@ public class Controller {
 	@Operation(description = "Получив эти данные, приложение course фиксирует время регистрации нового курса и сохраняет данные в коллекцию значений в памяти.")
 	public CoursesResponce regCourse(
 			@Schema(example = "{\"currencyId\": \"USD\", \"currencyVal\": 92.8722}") @RequestBody NewExchangeRate newExchangeRate) {
+		System.out.println("Cont!!!" + this.hashCode());
 		if (validationService.validate(newExchangeRate)) {
-			dataService.getCommands().add(new RegisterCourseCommand(LocalDateTime.now(), UUID.randomUUID(),
+			dataService.getCommands().add(new RegisterCourseCommand(LocalDateTime.now(),
 					Currencies.valueOf(newExchangeRate.getCurrencyId()), newExchangeRate.getCurrencyVal()));
 			return new CoursesResponce(ErrorCode.ZERO, ErrorMessage.SUCCESS);
 		}
@@ -48,9 +52,11 @@ public class Controller {
 
 	}
 
-	@GetMapping("/getCourse")
+	@GetMapping("/getCourse/{currencyId}")
 	@Operation(description = "Возвращает последний установленный курс")
-	public void getCourse() {
+	public Entry<LocalDateTime, BigDecimal> getCourse(Currencies currencyId) {
+		System.out.println(currencyId);
+		return dataService.getLastExchangerate(new RequestLastExchangerate(currencyId, UUID.randomUUID()));
 
 	}
 
