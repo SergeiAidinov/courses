@@ -29,10 +29,10 @@ public class Controller {
 
     @PostMapping("/regCourse")
     @Operation(description = "Получив эти данные, приложение course фиксирует время регистрации нового курса и сохраняет данные в коллекцию значений в памяти.")
-    public CoursesResponce regCourse(
+    public CoursesResponce addExchangeRate(
             @Schema(example = "{\"currencyId\": \"USD\", \"currencyVal\": 92.8722}") @RequestBody ExchangeRate exchangeRate) {
         if (validationService.validate(exchangeRate)) {
-            dataService.addNewExchangeRate(new ExchangeRateWithDate(
+            dataService.addExchangeRate(new ExchangeRateWithDate(
                    exchangeRate.getCurrencyId(), exchangeRate.getCurrencyVal(), LocalDateTime.now()));
             return new CoursesResponce(ErrorCode.ZERO, ErrorMessage.SUCCESS);
         }
@@ -50,19 +50,20 @@ public class Controller {
 
     @GetMapping("/getCourse/{currencyId}")
     @Operation(description = "Возвращает последний установленный курс")
-    public Optional<Entry<LocalDateTime, BigDecimal>> getCourse(Currencies currencyId) {
+    public Optional<Entry<LocalDateTime, BigDecimal>> getLastExchangeRate(Currencies currencyId) {
         return dataService.getLastExchangeRate(currencyId);
     }
 
     @GetMapping("/getCourseMax5/{currencyId}")
     @Operation(description = "Возвращает массив пяти последних самых высоких курса, которые присутствуют в текущем хранимом массиве записей курсов")
-    public List<ExchangeRateWithDate> getFiveCourseMax(Currencies currencyId) {
-        return dataService.getFiveCourseMax(currencyId);
+    public List<ExchangeRateWithDate> getFiveMaxCourses(Currencies currencyId) {
+        return dataService.getFiveMaxCourses(currencyId);
     }
 
     @GetMapping("/getCourseExtremum3")
     @Operation(description = "Возвращает массив трех последних наивысших пиков курса, которые присутствуют в текущем хранимом массиве записей курсов валюты")
-    public void getThreeCourseExtremum() {
+    public List<ExchangeRateWithDate> getThreeCourseExtremum(Currencies currencyId) {
+         return dataService.getThreeCourseExtremum(currencyId);
 
     }
 
