@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service;
 import lombok.AccessLevel;
 import lombok.Getter;
 import ru.yandex.incoming34.structures.Currencies;
+import ru.yandex.incoming34.structures.dto.NewExchangeRateWithDate;
+import ru.yandex.incoming34.structures.dto.RegisterCourseCommand;
 import ru.yandex.incoming34.structures.dto.RequestLastExchangerate;
-import ru.yandex.incoming34.structures.dto.CoursesResponce;
 
 @Service
 @Getter
@@ -30,7 +31,7 @@ public class DataService {
         new Thread(new CommandProcessor(commands, this)).start();
     }*/
 
-    public void addNewExchangeRate(CoursesResponce.RegisterCourseCommand registerCourseCommand) {
+    public void addNewExchangeRate(RegisterCourseCommand registerCourseCommand) {
         if (Objects.isNull(exchangeRates.get(registerCourseCommand.getCurrency())))
             exchangeRates.put(registerCourseCommand.getCurrency(), new TreeMap<LocalDateTime, BigDecimal>());
         exchangeRates.get(registerCourseCommand.getCurrency()).put(registerCourseCommand.getCommandDateTime(),
@@ -51,4 +52,6 @@ public class DataService {
         }
     }
 
+    public void addNewBulkExchangeRate(List<NewExchangeRateWithDate> newBulkExchangeRate) {
+    }
 }

@@ -20,7 +20,7 @@ public class CoursesResponce {
 	private final ErrorCode errorCode;
 	private final ErrorMessage errorMessage;
 
-	@Getter
+	/*@Getter
 	@AllArgsConstructor
 	public static class RegisterCourseCommand {
 
@@ -28,5 +28,5 @@ public class CoursesResponce {
 		private final Currencies currency;
 		private final BigDecimal exchangeRate;
 
-	}
+	}*/
 }

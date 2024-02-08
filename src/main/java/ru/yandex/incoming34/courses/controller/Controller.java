@@ -2,6 +2,7 @@ package ru.yandex.incoming34.courses.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,9 +21,7 @@ import ru.yandex.incoming34.courses.service.ValidationService;
 import ru.yandex.incoming34.structures.Currencies;
 import ru.yandex.incoming34.structures.ErrorCode;
 import ru.yandex.incoming34.structures.ErrorMessage;
-import ru.yandex.incoming34.structures.dto.RequestLastExchangerate;
-import ru.yandex.incoming34.structures.dto.CoursesResponce;
-import ru.yandex.incoming34.structures.dto.NewExchangeRate;
+import ru.yandex.incoming34.structures.dto.*;
 
 @RestController
 @RequestMapping(value = "/api/courses")
@@ -36,9 +35,8 @@ public class Controller {
     @Operation(description = "Получив эти данные, приложение course фиксирует время регистрации нового курса и сохраняет данные в коллекцию значений в памяти.")
     public CoursesResponce regCourse(
             @Schema(example = "{\"currencyId\": \"USD\", \"currencyVal\": 92.8722}") @RequestBody NewExchangeRate newExchangeRate) {
-        System.out.println("Cont!!!" + this.hashCode());
         if (validationService.validate(newExchangeRate)) {
-            dataService.addNewExchangeRate(new CoursesResponce.RegisterCourseCommand(LocalDateTime.now(),
+            dataService.addNewExchangeRate(new RegisterCourseCommand(LocalDateTime.now(),
                     Currencies.valueOf(newExchangeRate.getCurrencyId()), newExchangeRate.getCurrencyVal()));
             return new CoursesResponce(ErrorCode.ZERO, ErrorMessage.SUCCESS);
         }
@@ -46,9 +44,13 @@ public class Controller {
         return new CoursesResponce(ErrorCode.ONE, ErrorMessage.ILLEGAL_ARGUMENT);
     }
 
-    @PostMapping("/loadData")
+    @PostMapping(value = "/loadData")
     @Operation(description = "В теле сообщения передается массив курсов, которые нужно загрузить в дополнение к уже имеющимся в хранилище.")
-    public void loadData() {
+    public void loadData(@Schema(example = "[{\"currencyId\": \"USD\", \"currencyVal\": 92.8722, \"regTime\": \"2024-02-07T11:31:42.201\"}, " +
+            "{\"currencyId\": \"USD\", \"currencyVal\": 92.8742, \"regTime\": \"2024-02-07T12:31:44.122\"}, " +
+            "{\"currencyId\": \"EUR\", \"currencyVal\": 99.9282, \"regTime\": \"2024-02-07T13:02:22.114\"}]")
+                             @RequestBody List<NewExchangeRateWithDate> newExchangeRateWithDateList) {
+        dataService.addNewBulkExchangeRate(newExchangeRateWithDateList);
 
     }
 
