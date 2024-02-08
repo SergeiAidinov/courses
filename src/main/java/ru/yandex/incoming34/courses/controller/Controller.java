@@ -3,6 +3,7 @@ package ru.yandex.incoming34.courses.controller;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,7 +55,7 @@ public class Controller {
 
 	@GetMapping("/getCourse/{currencyId}")
 	@Operation(description = "Возвращает последний установленный курс")
-	public Entry<LocalDateTime, BigDecimal> getCourse(Currencies currencyId) {
+	public Optional<Entry<LocalDateTime, BigDecimal>> getCourse(Currencies currencyId) {
 		System.out.println(currencyId);
 		return dataService.getLastExchangerate(new RequestLastExchangerate(currencyId, UUID.randomUUID()));
 
