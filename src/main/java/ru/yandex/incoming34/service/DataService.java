@@ -57,32 +57,34 @@ public class DataService {
     }
 
     public List<ExchangeRateWithDate> getThreeCourseExtremum(Currencies currencyId) {
-        List<Map.Entry<LocalDateTime, BigDecimal>> peakList = new ArrayList<>();
-       if (Objects.nonNull(exchangeRates.get(currencyId)) && exchangeRates.get(currencyId).entrySet().size() >= 3) {
-          final List<Entry<LocalDateTime, BigDecimal>> entryList =  exchangeRates.get(currencyId).entrySet().stream().toList();
-          for (int i = 1; i < entryList.size() - 1; i++){
-              Entry<LocalDateTime, BigDecimal> previousEntry = entryList.get(i - 1);
-              Entry<LocalDateTime, BigDecimal> currentEntry = entryList.get(i);
-              Entry<LocalDateTime, BigDecimal> nextEntry = entryList.get(i + 1);
-              if (previousEntry.getValue().compareTo(currentEntry.getValue()) < 0 && currentEntry.getValue().compareTo(nextEntry.getValue()) > 0) {
-                  peakList.add(currentEntry);
-              }
-          }
-       }
-        System.out.println(peakList);
-        return peakList.stream()
-               .sorted(Entry.comparingByValue())
-               .collect(Collectors.toList())
-               .stream()
-               .limit(3)
-               .collect(Collectors.toList())
-               .stream()
-               .map(localDateTimeBigDecimalEntry ->
-                       new ExchangeRateWithDate(
-                               currencyId.name(),
-                               localDateTimeBigDecimalEntry.getValue(),
-                               localDateTimeBigDecimalEntry.getKey()
-                       )
-               ).collect(Collectors.toList());
+        if (Objects.nonNull(exchangeRates.get(currencyId)) && exchangeRates.get(currencyId).entrySet().size() >= 3) {
+            final List<Map.Entry<LocalDateTime, BigDecimal>> peakList = new ArrayList<>();
+            final List<Entry<LocalDateTime, BigDecimal>> entryList = exchangeRates.get(currencyId).entrySet().stream().toList();
+            for (int i = 1; i < entryList.size() - 1; i++) {
+                Entry<LocalDateTime, BigDecimal> previousEntry = entryList.get(i - 1);
+                Entry<LocalDateTime, BigDecimal> currentEntry = entryList.get(i);
+                Entry<LocalDateTime, BigDecimal> nextEntry = entryList.get(i + 1);
+                if (previousEntry.getValue().compareTo(currentEntry.getValue()) < 0 && currentEntry.getValue().compareTo(nextEntry.getValue()) > 0) {
+                    peakList.add(currentEntry);
+                }
+            }
+            return peakList.stream()
+                    .sorted(Entry.comparingByValue())
+                    .collect(Collectors.toList())
+                    .stream()
+                    .limit(3)
+                    .collect(Collectors.toList())
+                    .stream()
+                    .map(localDateTimeBigDecimalEntry ->
+                            new ExchangeRateWithDate(
+                                    currencyId.name(),
+                                    localDateTimeBigDecimalEntry.getValue(),
+                                    localDateTimeBigDecimalEntry.getKey()
+                            )
+                    ).collect(Collectors.toList());
+        } else {
+            return Collections.EMPTY_LIST;
+        }
     }
+
 }

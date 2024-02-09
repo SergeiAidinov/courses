@@ -64,7 +64,6 @@ public class Controller {
     @Operation(description = "Возвращает массив трех последних наивысших пиков курса, которые присутствуют в текущем хранимом массиве записей курсов валюты")
     public List<ExchangeRateWithDate> getThreeCourseExtremum(Currencies currencyId) {
          return dataService.getThreeCourseExtremum(currencyId);
-
     }
 
 }
