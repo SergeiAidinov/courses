@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Service
 public class DataService {
 
-    private final int MAX_REPO_SIZE = 5;
+    public final static int MAX_REPO_SIZE = 100;
     private final Map<Currencies, TreeMap<LocalDateTime, BigDecimal>> exchangeRates = new HashMap<Currencies, TreeMap<LocalDateTime, BigDecimal>>();
 
     public void addExchangeRate(ExchangeRateWithDate registerCourseCommand) {
@@ -39,25 +39,29 @@ public class DataService {
     }
 
     public List<ExchangeRateWithDate> getFiveMaxCourses(Currencies currencyId) {
-        return (Objects.nonNull(exchangeRates.get(currencyId))) ?
-                exchangeRates.get(currencyId).entrySet().stream()
-                        .sorted(Map.Entry.comparingByValue())
-                        .collect(Collectors.toList())
-                        .stream()
-                        .limit(5)
-                        .collect(Collectors.toList())
-                        .stream()
-                        .map(localDateTimeBigDecimalEntry ->
-                                new ExchangeRateWithDate(
-                                        currencyId.name(),
-                                        localDateTimeBigDecimalEntry.getValue(),
-                                        localDateTimeBigDecimalEntry.getKey()
-                                )
-                        ).collect(Collectors.toList()) : Collections.EMPTY_LIST;
+        final int LIMIT = 5;
+        if (Objects.nonNull(exchangeRates.get(currencyId))) {
+            List<Entry<LocalDateTime, BigDecimal>> sortedEntries = exchangeRates.get(currencyId).entrySet().stream()
+                    .sorted(Entry.comparingByValue())
+                    .collect(Collectors.toList());
+            return sortedEntries.stream().skip(sortedEntries.size() - LIMIT)
+                    .limit(LIMIT)
+                    .collect(Collectors.toList())
+                    .stream()
+                    .map(localDateTimeBigDecimalEntry ->
+                            new ExchangeRateWithDate(
+                                    currencyId.name(),
+                                    localDateTimeBigDecimalEntry.getValue(),
+                                    localDateTimeBigDecimalEntry.getKey()
+                            )
+                    ).collect(Collectors.toList());
+        }
+        return Collections.EMPTY_LIST;
     }
 
     public List<ExchangeRateWithDate> getThreeCourseExtremum(Currencies currencyId) {
         if (Objects.nonNull(exchangeRates.get(currencyId)) && exchangeRates.get(currencyId).entrySet().size() >= 3) {
+            final int LIMIT = 3;
             final List<Map.Entry<LocalDateTime, BigDecimal>> peakList = new ArrayList<>();
             final List<Entry<LocalDateTime, BigDecimal>> entryList = exchangeRates.get(currencyId).entrySet().stream().toList();
             for (int i = 1; i < entryList.size() - 1; i++) {
@@ -72,7 +76,8 @@ public class DataService {
                     .sorted(Entry.comparingByValue())
                     .collect(Collectors.toList())
                     .stream()
-                    .limit(3)
+                    .skip(peakList.size() - LIMIT)
+                    .limit(LIMIT)
                     .collect(Collectors.toList())
                     .stream()
                     .map(localDateTimeBigDecimalEntry ->
