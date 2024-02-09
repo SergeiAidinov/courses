@@ -36,7 +36,7 @@ class DataServiceTest {
         this.dataService = dataService;
     }
 
-    @BeforeAll
+  /*  @BeforeAll
     private void before() {
         System.out.println("Before");
         try {
@@ -51,7 +51,7 @@ class DataServiceTest {
     private void after() {
         exchangeRatesField.setAccessible(false);
         Assert.assertFalse(exchangeRatesField.isAccessible());
-    }
+    }*/
 
 
     @Test
@@ -63,11 +63,11 @@ class DataServiceTest {
         Assert.assertEquals(Optional.of(Map.entry(localDateTimeEur, new BigDecimal("101.6723"))), dataService.getLastExchangeRate(EUR));
     }
 
-    @Test
+   /* @Test
     @Order(value = 2)
     void getLastExchangeRate() {
         dataService.getLastExchangeRate(USD);
-    }
+    }*/
 
     @Test
     @Order(value = 3)
@@ -96,7 +96,25 @@ class DataServiceTest {
     @Test
     @Order(value = 4)
     void getFiveMaxCourses() {
-        dataService.getFiveMaxCourses(USD);
+        final List<ExchangeRateWithDate> sampleUsdList = List.of(
+                new ExchangeRateWithDate("USD", new BigDecimal("1035.1234"), LocalDateTime.parse("2023-02-01T12:00:15.963")),
+                new ExchangeRateWithDate("USD", new BigDecimal("1195.1234"), LocalDateTime.parse("2023-02-01T12:10:15.963")),
+                new ExchangeRateWithDate("USD", new BigDecimal("1355.1234"), LocalDateTime.parse("2023-02-01T12:20:15.963")),
+                new ExchangeRateWithDate("USD", new BigDecimal("1515.1234"), LocalDateTime.parse("2023-02-01T12:30:15.963")),
+                new ExchangeRateWithDate("USD", new BigDecimal("1675.1234"), LocalDateTime.parse("2023-02-01T12:40:15.963"))
+        );
+        Assert.assertTrue(sampleUsdList.containsAll(dataService.getFiveMaxCourses(USD))
+                && sampleUsdList.size() == dataService.getFiveMaxCourses(USD).size());
+
+        final List<ExchangeRateWithDate> sampleEurList = List.of(
+                new ExchangeRateWithDate("EUR", new BigDecimal("818.6723"), LocalDateTime.parse("2023-02-05T20:00:15.854")),
+                new ExchangeRateWithDate("EUR", new BigDecimal("938.6723"), LocalDateTime.parse("2023-02-06T06:00:15.854")),
+                new ExchangeRateWithDate("EUR", new BigDecimal("1058.6723"), LocalDateTime.parse("2023-02-06T16:00:15.854")),
+                new ExchangeRateWithDate("EUR", new BigDecimal("1178.6723"), LocalDateTime.parse("2023-02-07T02:00:15.854")),
+                new ExchangeRateWithDate("EUR", new BigDecimal("1298.6723"), LocalDateTime.parse("2023-02-07T12:00:15.854"))
+        );
+        Assert.assertTrue(sampleEurList.containsAll(dataService.getFiveMaxCourses(EUR))
+                && sampleEurList.size() == dataService.getFiveMaxCourses(EUR).size());
     }
 
     @Test

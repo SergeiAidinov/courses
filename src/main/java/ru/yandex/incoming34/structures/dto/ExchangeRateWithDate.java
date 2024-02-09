@@ -3,6 +3,7 @@ package ru.yandex.incoming34.structures.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import ru.yandex.incoming34.structures.RegExpPatterns;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Getter
+@EqualsAndHashCode
 public class ExchangeRateWithDate {
 
     @Pattern(regexp = RegExpPatterns.AVAILABLE_CURRENCIES)
