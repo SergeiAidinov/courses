@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static ru.yandex.incoming34.structures.Currencies.EUR;
 import static ru.yandex.incoming34.structures.Currencies.USD;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -59,7 +60,7 @@ class DataServiceTest {
         dataService.addExchangeRate(new ExchangeRateWithDate("USD", new BigDecimal("98.1234"), localDateTimeUsd));
         dataService.addExchangeRate(new ExchangeRateWithDate("EUR", new BigDecimal("101.6723"), localDateTimeEur));
         Assert.assertEquals(Optional.of(Map.entry(localDateTimeUsd, new BigDecimal("98.1234"))), dataService.getLastExchangeRate(USD));
-        Assert.assertEquals(Optional.of(Map.entry(localDateTimeEur, new BigDecimal("101.6723"))), dataService.getLastExchangeRate(Currencies.EUR));
+        Assert.assertEquals(Optional.of(Map.entry(localDateTimeEur, new BigDecimal("101.6723"))), dataService.getLastExchangeRate(EUR));
     }
 
     @Test
@@ -73,17 +74,23 @@ class DataServiceTest {
     void addNewBulkExchangeRate() {
         List<ExchangeRateWithDate> newBulkExchangeRateList = new ArrayList<>();
         BigDecimal lastUsdExchangeRate = new BigDecimal("75.1234");
-        for (int i = 1; i < DataService.MAX_REPO_SIZE + 10; i++){
+        BigDecimal lastEurExchangeRate = new BigDecimal("98.6723");
+        for (int i = 1; i < DataService.MAX_REPO_SIZE + 10; i++) {
             lastUsdExchangeRate = lastUsdExchangeRate.add(BigDecimal.valueOf(1));
+            lastEurExchangeRate = lastEurExchangeRate.add(BigDecimal.valueOf(2));
             if (i % 10 == 0) {
                 newBulkExchangeRateList.add(new ExchangeRateWithDate("USD", lastUsdExchangeRate.add(BigDecimal.valueOf(i * 15)), localDateTimeUsd.plusMinutes(i)));
+                newBulkExchangeRateList.add(new ExchangeRateWithDate("EUR", lastEurExchangeRate.add(BigDecimal.valueOf(i * 10)), localDateTimeEur.plusHours(i)));
             } else {
                 newBulkExchangeRateList.add(new ExchangeRateWithDate("USD", lastUsdExchangeRate, localDateTimeUsd.plusMinutes(i)));
+                newBulkExchangeRateList.add(new ExchangeRateWithDate("EUR", lastEurExchangeRate, localDateTimeEur.plusHours(i)));
             }
-
         }
         dataService.addNewBulkExchangeRate(newBulkExchangeRateList);
-        dataService.getLastExchangeRate(USD);
+        Assert.assertEquals(Optional.of(Map.entry(LocalDateTime.of(2023, 2, 1, 12, 49, 15, 963_000_000),
+                new BigDecimal("184.1234"))), dataService.getLastExchangeRate(USD));
+        Assert.assertEquals(Optional.of(Map.entry(LocalDateTime.of(2023, 02, 07, 21, 00, 15, 854_000_000),
+                new BigDecimal("316.6723"))), dataService.getLastExchangeRate(EUR));
     }
 
     @Test
