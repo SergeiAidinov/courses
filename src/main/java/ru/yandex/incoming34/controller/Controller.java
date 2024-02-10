@@ -13,10 +13,8 @@ import ru.yandex.incoming34.structures.dto.CoursesResponse;
 import ru.yandex.incoming34.structures.dto.ExchangeRate;
 import ru.yandex.incoming34.structures.dto.ExchangeRateWithDate;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -53,11 +51,8 @@ public class Controller {
     @GetMapping("/getCourse/{currencyId}")
     @Operation(description = "Возвращает последний установленный курс")
     public Optional<ExchangeRateWithDate> getLastExchangeRate(Currencies currencyId) {
-        final Optional<Map.Entry<LocalDateTime, BigDecimal>> localDateTimeBigDecimalEntryOptional = dataService.getLastExchangeRate(currencyId);
-        if (localDateTimeBigDecimalEntryOptional.isPresent()) {
-            return Optional.of(new ExchangeRateWithDate(currencyId.name(), localDateTimeBigDecimalEntryOptional.get().getValue(),
-                            localDateTimeBigDecimalEntryOptional.get().getKey()));
-        } else return Optional.empty();
+        return dataService.getLastExchangeRate(currencyId).map(localDateTimeBigDecimalEntry -> new ExchangeRateWithDate(currencyId.name(), localDateTimeBigDecimalEntry.getValue(),
+                localDateTimeBigDecimalEntry.getKey()));
     }
 
     @GetMapping("/getCourseMax5/{currencyId}")

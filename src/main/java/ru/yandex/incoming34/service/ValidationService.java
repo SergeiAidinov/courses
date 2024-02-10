@@ -12,16 +12,18 @@ import java.util.List;
 @Service
 public class ValidationService {
 
+	public static final String AVAILABLE_CURRENCIES = "[USD|EUR]{3}";
+	private final String UNSUPPORTED_CURRENCY = "Unsupported currency";
 	private final ValidatorFactory factory = jakarta.validation.Validation.buildDefaultValidatorFactory();
 	private final Validator validator = factory.getValidator();
 
 	public void throwExceptionIfInvalid(ExchangeRate exchangeRate) {
-		if(!validator.validate(exchangeRate).isEmpty()) throw  new RuntimeException("Unsupported currency");
+		if(!validator.validate(exchangeRate).isEmpty()) throw  new RuntimeException(UNSUPPORTED_CURRENCY);
 	}
 
 	public void throwExceptionIfInvalid(List<ExchangeRateWithDate> exchangeRateWithDateList) {
 		for (ExchangeRateWithDate exchangeRateWithDate : exchangeRateWithDateList) {
-			if(!validator.validate(exchangeRateWithDate).isEmpty()) throw  new RuntimeException("Unsupported currency");
+			if(!validator.validate(exchangeRateWithDate).isEmpty()) throw  new RuntimeException(UNSUPPORTED_CURRENCY);
 		}
 	}
 

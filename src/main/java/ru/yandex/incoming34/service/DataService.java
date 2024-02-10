@@ -44,8 +44,7 @@ public class DataService {
             List<Entry<LocalDateTime, BigDecimal>> sortedEntries = exchangeRates.get(currencyId).entrySet().stream()
                     .sorted(Entry.comparingByValue())
                     .collect(Collectors.toList());
-            return sortedEntries.stream().skip(sortedEntries.size() - LIMIT)
-                    .limit(LIMIT)
+            return sortedEntries.stream().skip(sortedEntries.size() > LIMIT ? (sortedEntries.size() - LIMIT) : 0)
                     .collect(Collectors.toList())
                     .stream()
                     .map(localDateTimeBigDecimalEntry ->
@@ -76,8 +75,7 @@ public class DataService {
                     .sorted(Entry.comparingByValue())
                     .collect(Collectors.toList())
                     .stream()
-                    .skip(peakList.size() - LIMIT)
-                    .limit(LIMIT)
+                    .skip(peakList.size() > LIMIT ? (peakList.size() - LIMIT) : 0)
                     .collect(Collectors.toList())
                     .stream()
                     .map(localDateTimeBigDecimalEntry ->
