@@ -3,13 +3,12 @@ package ru.yandex.incoming34.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.incoming34.service.DataService;
 import ru.yandex.incoming34.service.ValidationService;
 import ru.yandex.incoming34.structures.Currencies;
-import ru.yandex.incoming34.structures.ErrorCode;
-import ru.yandex.incoming34.structures.ErrorMessage;
-import ru.yandex.incoming34.structures.dto.CoursesResponce;
+import ru.yandex.incoming34.structures.dto.CoursesResponse;
 import ru.yandex.incoming34.structures.dto.ExchangeRate;
 import ru.yandex.incoming34.structures.dto.ExchangeRateWithDate;
 
@@ -26,17 +25,18 @@ public class Controller {
 
     private final DataService dataService;
     private final ValidationService validationService;
+    public static final String SUCCESS_MESSAGE = "SUCCESS";
 
     @PostMapping("/regCourse")
     @Operation(description = "Получив эти данные, приложение course фиксирует время регистрации нового курса и сохраняет данные в коллекцию значений в памяти.")
-    public CoursesResponce addExchangeRate(
+    public CoursesResponse addExchangeRate(
             @Schema(example = "{\"currencyId\": \"USD\", \"currencyVal\": 92.8722}") @RequestBody ExchangeRate exchangeRate) {
-        if (validationService.validate(exchangeRate)) {
+        if (validationService.isValide(exchangeRate)) {
             dataService.addExchangeRate(new ExchangeRateWithDate(
                    exchangeRate.getCurrencyId(), exchangeRate.getCurrencyVal(), LocalDateTime.now()));
-            return new CoursesResponce(ErrorCode.ZERO, ErrorMessage.SUCCESS);
+            return new CoursesResponse(SUCCESS_MESSAGE);
         }
-        return new CoursesResponce(ErrorCode.ONE, ErrorMessage.ILLEGAL_ARGUMENT);
+        return new CoursesResponse("Unsupported currency");
     }
 
     @PostMapping(value = "/loadData")
@@ -64,6 +64,12 @@ public class Controller {
     @Operation(description = "Возвращает массив трех последних наивысших пиков курса, которые присутствуют в текущем хранимом массиве записей курсов валюты")
     public List<ExchangeRateWithDate> getThreeCourseExtremum(Currencies currencyId) {
          return dataService.getThreeCourseExtremum(currencyId);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public CoursesResponse handleException(org.springframework.http.converter.HttpMessageNotReadableException exception) {
+        return new CoursesResponse(exception.getMessage());
     }
 
 }

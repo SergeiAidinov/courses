@@ -12,7 +12,7 @@ public class ValidationService {
 	private final ValidatorFactory factory = jakarta.validation.Validation.buildDefaultValidatorFactory();
 	private final Validator validator = factory.getValidator();
 
-	public boolean validate(ExchangeRate exchangeRate) {
+	public boolean isValide(ExchangeRate exchangeRate) {
 		return validator.validate(exchangeRate).isEmpty();
 	}
 
