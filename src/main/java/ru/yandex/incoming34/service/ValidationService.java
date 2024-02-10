@@ -13,7 +13,7 @@ import java.util.List;
 public class ValidationService {
 
 	public static final String AVAILABLE_CURRENCIES = "[USD|EUR]{3}";
-	private final String UNSUPPORTED_CURRENCY = "Unsupported currency";
+	public final static String UNSUPPORTED_CURRENCY = "Unsupported currency";
 	private final ValidatorFactory factory = jakarta.validation.Validation.buildDefaultValidatorFactory();
 	private final Validator validator = factory.getValidator();
 
