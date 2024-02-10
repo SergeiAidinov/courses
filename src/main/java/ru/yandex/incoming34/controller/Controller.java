@@ -11,6 +11,7 @@ import ru.yandex.incoming34.structures.Currencies;
 import ru.yandex.incoming34.structures.dto.CoursesResponse;
 import ru.yandex.incoming34.structures.dto.ExchangeRate;
 import ru.yandex.incoming34.structures.dto.ExchangeRateWithDate;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,12 +32,10 @@ public class Controller {
     @Operation(description = "Получив эти данные, приложение course фиксирует время регистрации нового курса и сохраняет данные в коллекцию значений в памяти.")
     public CoursesResponse addExchangeRate(
             @Schema(example = "{\"currencyId\": \"USD\", \"currencyVal\": 92.8722}") @RequestBody ExchangeRate exchangeRate) {
-        if (validationService.isValide(exchangeRate)) {
-            dataService.addExchangeRate(new ExchangeRateWithDate(
-                   exchangeRate.getCurrencyId(), exchangeRate.getCurrencyVal(), LocalDateTime.now()));
-            return new CoursesResponse(SUCCESS_MESSAGE);
-        }
-        return new CoursesResponse("Unsupported currency");
+        validationService.throwExceptionIfInvalid(exchangeRate);
+        dataService.addExchangeRate(new ExchangeRateWithDate(
+                exchangeRate.getCurrencyId(), exchangeRate.getCurrencyVal(), LocalDateTime.now()));
+        return new CoursesResponse(SUCCESS_MESSAGE);
     }
 
     @PostMapping(value = "/loadData")
@@ -44,7 +43,8 @@ public class Controller {
     public void loadData(@Schema(example = "[{\"currencyId\": \"USD\", \"currencyVal\": 92.8722, \"regTime\": \"2024-02-07T11:31:42.201\"}, " +
             "{\"currencyId\": \"USD\", \"currencyVal\": 92.8742, \"regTime\": \"2024-02-07T12:31:44.122\"}, " +
             "{\"currencyId\": \"EUR\", \"currencyVal\": 99.9282, \"regTime\": \"2024-02-07T13:02:22.114\"}]")
-                             @RequestBody List<ExchangeRateWithDate> exchangeRateWithDateList) {
+                         @RequestBody List<ExchangeRateWithDate> exchangeRateWithDateList) {
+        validationService.throwExceptionIfInvalid(exchangeRateWithDateList);
         dataService.addNewBulkExchangeRate(exchangeRateWithDateList);
     }
 
@@ -63,12 +63,12 @@ public class Controller {
     @GetMapping("/getCourseExtremum3")
     @Operation(description = "Возвращает массив трех последних наивысших пиков курса, которые присутствуют в текущем хранимом массиве записей курсов валюты")
     public List<ExchangeRateWithDate> getThreeCourseExtremum(Currencies currencyId) {
-         return dataService.getThreeCourseExtremum(currencyId);
+        return dataService.getThreeCourseExtremum(currencyId);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
-    public CoursesResponse handleException(org.springframework.http.converter.HttpMessageNotReadableException exception) {
+    @ExceptionHandler(value = {RuntimeException.class, HttpMessageNotReadableException.class})
+    public CoursesResponse handleException(RuntimeException exception) {
         return new CoursesResponse(exception.getMessage());
     }
 
