@@ -50,14 +50,14 @@ public class Controller {
 
     @GetMapping("/getCourse/{currencyId}")
     @Operation(description = "Возвращает последний установленный курс")
-    public Optional<ExchangeRateWithDate> getLastExchangeRate(Currencies currencyId) {
+    public Optional<ExchangeRateWithDate> getLastExchangeRate(@PathVariable Currencies currencyId) {
         return dataService.getLastExchangeRate(currencyId).map(localDateTimeBigDecimalEntry -> new ExchangeRateWithDate(currencyId.name(), localDateTimeBigDecimalEntry.getValue(),
                 localDateTimeBigDecimalEntry.getKey()));
     }
 
     @GetMapping("/getCourseMax5/{currencyId}")
     @Operation(description = "Возвращает массив пяти последних самых высоких курса, которые присутствуют в текущем хранимом массиве записей курсов")
-    public List<ExchangeRateWithDate> getFiveMaxCourses(Currencies currencyId) {
+    public List<ExchangeRateWithDate> getFiveMaxCourses(@PathVariable Currencies currencyId) {
         return dataService.getFiveMaxCourses(currencyId);
     }
 

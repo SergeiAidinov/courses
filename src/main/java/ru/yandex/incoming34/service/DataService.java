@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 public class DataService {
 
     public final static int MAX_REPO_SIZE = 100;
-    private final Map<Currencies, TreeMap<LocalDateTime, BigDecimal>> exchangeRates = new HashMap<Currencies, TreeMap<LocalDateTime, BigDecimal>>();
+    private final Map<Currencies, TreeMap<LocalDateTime, BigDecimal>> exchangeRates = new HashMap<>();
 
     public void addExchangeRate(ExchangeRateWithDate registerCourseCommand) {
         if (Objects.isNull(exchangeRates.get(Currencies.valueOf(registerCourseCommand.getCurrencyId())))) {
-            exchangeRates.put(Currencies.valueOf(registerCourseCommand.getCurrencyId()), new TreeMap<LocalDateTime, BigDecimal>());
+            exchangeRates.put(Currencies.valueOf(registerCourseCommand.getCurrencyId()), new TreeMap<>());
         }
         exchangeRates.get(Currencies.valueOf(registerCourseCommand.getCurrencyId())).put(registerCourseCommand.getRegTime(),
                 registerCourseCommand.getCurrencyVal());
@@ -43,9 +43,9 @@ public class DataService {
         if (Objects.nonNull(exchangeRates.get(currencyId))) {
             List<Entry<LocalDateTime, BigDecimal>> sortedEntries = exchangeRates.get(currencyId).entrySet().stream()
                     .sorted(Entry.comparingByValue())
-                    .collect(Collectors.toList());
+                    .toList();
             return sortedEntries.stream().skip(sortedEntries.size() > LIMIT ? (sortedEntries.size() - LIMIT) : 0)
-                    .collect(Collectors.toList())
+                    .toList()
                     .stream()
                     .map(localDateTimeBigDecimalEntry ->
                             new ExchangeRateWithDate(
@@ -73,10 +73,10 @@ public class DataService {
             }
             return peakList.stream()
                     .sorted(Entry.comparingByValue())
-                    .collect(Collectors.toList())
+                    .toList()
                     .stream()
                     .skip(peakList.size() > LIMIT ? (peakList.size() - LIMIT) : 0)
-                    .collect(Collectors.toList())
+                    .toList()
                     .stream()
                     .map(localDateTimeBigDecimalEntry ->
                             new ExchangeRateWithDate(
