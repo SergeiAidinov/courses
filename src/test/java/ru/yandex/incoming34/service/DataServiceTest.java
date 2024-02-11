@@ -94,5 +94,21 @@ class DataServiceTest {
     @Order(value = 4)
     void getThreeCourseExtremum() {
         dataService.getThreeCourseExtremum(USD);
+        final List<ExchangeRateWithDate> sampleUsdList = List.of(
+                new ExchangeRateWithDate("USD", new BigDecimal("1355.1234"), LocalDateTime.parse("2023-02-01T12:20:15.963")),
+                new ExchangeRateWithDate("USD", new BigDecimal("1515.1234"), LocalDateTime.parse("2023-02-01T12:30:15.963")),
+                new ExchangeRateWithDate("USD", new BigDecimal("1675.1234"), LocalDateTime.parse("2023-02-01T12:40:15.963"))
+        );
+        Assert.assertTrue(sampleUsdList.containsAll(dataService.getThreeCourseExtremum(USD))
+                && sampleUsdList.size() == dataService.getThreeCourseExtremum(USD).size());
+
+        final List<ExchangeRateWithDate> sampleEurList = List.of(
+                new ExchangeRateWithDate("EUR", new BigDecimal("1058.6723"), LocalDateTime.parse("2023-02-06T16:00:15.854")),
+                new ExchangeRateWithDate("EUR", new BigDecimal("1178.6723"), LocalDateTime.parse("2023-02-07T02:00:15.854")),
+                new ExchangeRateWithDate("EUR", new BigDecimal("1298.6723"), LocalDateTime.parse("2023-02-07T12:00:15.854"))
+
+        );
+        Assert.assertTrue(sampleEurList.containsAll(dataService.getThreeCourseExtremum(EUR))
+                && sampleEurList.size() == dataService.getThreeCourseExtremum(EUR).size());
     }
 }
