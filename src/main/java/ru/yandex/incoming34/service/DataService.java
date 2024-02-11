@@ -41,7 +41,7 @@ public class DataService {
     public List<ExchangeRateWithDate> getFiveMaxCourses(Currencies currencyId) {
         final int LIMIT = 5;
         if (Objects.nonNull(exchangeRates.get(currencyId))) {
-            List<Entry<LocalDateTime, BigDecimal>> sortedEntries = exchangeRates.get(currencyId).entrySet().stream()
+            final List<Entry<LocalDateTime, BigDecimal>> sortedEntries = exchangeRates.get(currencyId).entrySet().stream()
                     .sorted(Entry.comparingByValue())
                     .toList();
             return sortedEntries.stream().skip(sortedEntries.size() > LIMIT ? (sortedEntries.size() - LIMIT) : 0)
