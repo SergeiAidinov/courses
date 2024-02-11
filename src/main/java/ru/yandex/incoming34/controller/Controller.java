@@ -56,13 +56,14 @@ public class Controller {
     }
 
     @GetMapping("/getCourseMax5/{currencyId}")
-    @Operation(description = "Возвращает массив пяти последних самых высоких курса, которые присутствуют в текущем хранимом массиве записей курсов")
+    @Operation(description = "Возвращает массив из пяти самых высоких курсов, которые присутствуют в текущем хранимом массиве записей курсов")
     public List<ExchangeRateWithDate> getFiveMaxCourses(@PathVariable Currencies currencyId) {
         return dataService.getFiveMaxCourses(currencyId);
     }
 
     @GetMapping("/getCourseExtremum3")
-    @Operation(description = "Возвращает массив трех последних наивысших пиков курса, которые присутствуют в текущем хранимом массиве записей курсов валюты")
+    @Operation(description = "Возвращает массив трех наивысших пиков курса, которые присутствуют в текущем хранимом массиве записей курсов валюты. " +
+            "Пик курса характеризуется тем, что записи слева и справа от него по времени регистрации имеют меньшие значения курса.")
     public List<ExchangeRateWithDate> getThreeCourseExtremum(Currencies currencyId) {
         return dataService.getThreeCourseExtremum(currencyId);
     }
